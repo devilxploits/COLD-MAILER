@@ -1,0 +1,195 @@
+{% extends "layout.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block header %}Analytics Dashboard{% endblock %}
+
+{% block header_actions %}
+<a href="{{ url_for('new_campaign') }}" class="btn btn-primary">
+    <i class="fas fa-plus-circle me-2"></i> New Campaign
+</a>
+{% endblock %}
+
+{% block content %}
+<!-- Stats overview cards -->
+<div class="stat-cards-row mb-4" id="stats-cards">
+    <div class="row g-3">
+        <div class="col-md-6 col-lg-3">
+            <div class="stat-card">
+                <div class="stat-content">
+                    <div class="stat-label">Total Emails Sent</div>
+                    <div class="stat-value" id="total-sent">0</div>
+                    <div class="stat-change">
+                        <span class="change-indicator positive">
+                            <i class="fas fa-caret-up"></i>
+                        </span>
+                        <span class="change-value" id="sent-change">0%</span>
+                        <span class="change-period">vs last week</span>
+                    </div>
+                </div>
+                <div class="stat-icon">
+                    <i class="fas fa-paper-plane"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-3">
+            <div class="stat-card">
+                <div class="stat-content">
+                    <div class="stat-label">Total Opens</div>
+                    <div class="stat-value" id="total-opens">0</div>
+                    <div class="stat-change">
+                        <span class="change-indicator positive">
+                            <i class="fas fa-caret-up"></i>
+                        </span>
+                        <span class="change-value" id="opens-change">0%</span>
+                        <span class="change-period">vs last week</span>
+                    </div>
+                </div>
+                <div class="stat-icon">
+                    <i class="fas fa-envelope-open"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-3">
+            <div class="stat-card">
+                <div class="stat-content">
+                    <div class="stat-label">Total Clicks</div>
+                    <div class="stat-value" id="total-clicks">0</div>
+                    <div class="stat-change">
+                        <span class="change-indicator positive">
+                            <i class="fas fa-caret-up"></i>
+                        </span>
+                        <span class="change-value" id="clicks-change">0%</span>
+                        <span class="change-period">vs last week</span>
+                    </div>
+                </div>
+                <div class="stat-icon">
+                    <i class="fas fa-mouse-pointer"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-3">
+            <div class="stat-card">
+                <div class="stat-content">
+                    <div class="stat-label">Total Replies</div>
+                    <div class="stat-value" id="total-replies">0</div>
+                    <div class="stat-change">
+                        <span class="change-indicator positive">
+                            <i class="fas fa-caret-up"></i>
+                        </span>
+                        <span class="change-value" id="replies-change">0%</span>
+                        <span class="change-period">vs last week</span>
+                    </div>
+                </div>
+                <div class="stat-icon">
+                    <i class="fas fa-reply"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts row -->
+<div class="row g-4 mb-4">
+    <div class="col-md-8">
+        <div class="card dashboard-card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title">Open Rate Performance</h5>
+                <div class="chart-actions">
+                    <button class="btn btn-sm btn-outline-light active">Weekly</button>
+                    <button class="btn btn-sm btn-outline-light">Monthly</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="openRateChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card dashboard-card">
+            <div class="card-header">
+                <h5 class="card-title">Delivery Status</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="deliveryStatusChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent campaigns -->
+<div class="card dashboard-card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title">Recent Campaigns</h5>
+        <a href="{{ url_for('campaigns') }}" class="btn btn-sm btn-outline-primary">View All</a>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table dashboard-table">
+                <thead>
+                    <tr>
+                        <th>Campaign Name</th>
+                        <th>Sent</th>
+                        <th>Opens</th>
+                        <th>Open Rate</th>
+                        <th>Clicks</th>
+                        <th>Replies</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="recent-campaigns">
+                    <tr class="text-center">
+                        <td colspan="8">No campaigns found</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Empty state -->
+<div id="empty-state" class="empty-state text-center py-5" style="display: none;">
+    <div class="empty-state-icon">
+        <i class="fas fa-chart-bar"></i>
+    </div>
+    <h3 class="empty-state-title">No campaign data yet</h3>
+    <p class="empty-state-text">Start by creating and sending your first campaign to see analytics</p>
+    <a href="{{ url_for('new_campaign') }}" class="btn btn-primary btn-lg mt-3">
+        <i class="fas fa-plus-circle me-2"></i> Create First Campaign
+    </a>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script>
+    // Additional enhancement script for the dashboard
+    document.addEventListener('DOMContentLoaded', function() {
+        // Simulate percentage changes (these would normally be calculated from real data)
+        document.getElementById('sent-change').textContent = '12%';
+        document.getElementById('opens-change').textContent = '8%';
+        document.getElementById('clicks-change').textContent = '15%';
+        document.getElementById('replies-change').textContent = '5%';
+        
+        // Add hover effect to stat cards
+        const statCards = document.querySelectorAll('.stat-card');
+        statCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.classList.add('stat-card-hover');
+            });
+            card.addEventListener('mouseleave', function() {
+                this.classList.remove('stat-card-hover');
+            });
+        });
+    });
+</script>
+{% endblock %}

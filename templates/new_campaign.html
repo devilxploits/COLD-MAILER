@@ -1,0 +1,202 @@
+{% extends "layout.html" %}
+
+{% block title %}New Campaign{% endblock %}
+
+{% block header %}Create New Campaign{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <form id="campaign-form">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Campaign Details</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="campaign-name" class="form-label">Campaign Name</label>
+                        <input type="text" class="form-control" id="campaign-name" placeholder="Enter a name for this campaign" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="campaign-subject" class="form-label">Email Subject</label>
+                        <input type="text" class="form-control" id="campaign-subject" placeholder="Email subject line" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="from-name" class="form-label">From Name</label>
+                        <input type="text" class="form-control" id="from-name" placeholder="Name visible to recipients" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="reply-to" class="form-label">Reply-To Email</label>
+                        <input type="email" class="form-control" id="reply-to" placeholder="Where replies should go" required>
+                        <div class="form-text">Responses will be sent to this email instead of the sender email.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Recipients</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="recipients-paste" class="form-label">Paste Email List</label>
+                    <textarea class="form-control" id="recipients-paste" rows="5" placeholder="Paste email addresses (one per line)"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="recipients-file" class="form-label">Or Upload Email List</label>
+                    <input class="form-control" type="file" id="recipients-file" accept=".csv,.txt">
+                    <div class="form-text">Upload a CSV or TXT file with one email per line.</div>
+                </div>
+                <div class="mb-3" id="recipients-preview-container" style="display: none;">
+                    <label class="form-label">Recipients Preview</label>
+                    <div class="table-responsive">
+                        <table class="table table-sm" id="recipients-preview">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Email</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Recipients preview will be added here via JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-muted" id="recipient-count">0 recipients</span>
+                        <button type="button" class="btn btn-sm btn-outline-danger" id="clear-recipients">Clear All</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Email Content</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="content-type" id="content-type-plain" value="plain" checked>
+                        <label class="form-check-label" for="content-type-plain">Plain Text (No HTML)</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="content-type" id="content-type-html" value="html">
+                        <label class="form-check-label" for="content-type-html">HTML Content</label>
+                    </div>
+                </div>
+                
+                <!-- Plain Text Editor -->
+                <div id="plain-text-editor" class="mb-3">
+                    <label for="plain-content" class="form-label">Email Content</label>
+                    <textarea class="form-control" id="plain-content" rows="10" placeholder="Enter your email content here"></textarea>
+                </div>
+                
+                <!-- HTML Editor -->
+                <div id="html-editor" class="mb-3" style="display: none;">
+                    <div class="mb-3">
+                        <label for="html-content" class="form-label">HTML Content</label>
+                        <textarea class="form-control" id="html-content" rows="10" placeholder="Enter HTML content or upload a template"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="html-file" class="form-label">Or Upload HTML Template</label>
+                        <input class="form-control" type="file" id="html-file" accept=".html,.htm">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">HTML Preview</label>
+                        <div class="border p-3 bg-light" id="html-preview">
+                            <div class="text-center text-muted">HTML preview will appear here</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5><i class="fas fa-server me-2"></i>SMTP Settings</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info mb-3">
+                    <i class="fas fa-info-circle me-2"></i><strong>Email Server Settings</strong>
+                    These settings will be used to send your campaign.
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="smtp-host" class="form-label">SMTP Host</label>
+                        <input type="text" class="form-control" id="smtp-host" placeholder="e.g., smtp.gmail.com">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="smtp-port" class="form-label">SMTP Port</label>
+                        <input type="number" class="form-control" id="smtp-port" placeholder="e.g., 587">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="smtp-username" class="form-label">SMTP Username</label>
+                        <input type="email" class="form-control" id="smtp-username" placeholder="Your email address">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="smtp-password" class="form-label">SMTP Password</label>
+                        <input type="password" class="form-control" id="smtp-password" placeholder="Your email password">
+                        <div class="form-text">For Gmail, use an <a href="https://support.google.com/accounts/answer/185833" target="_blank">App Password</a> instead of your regular password.</div>
+                    </div>
+                </div>
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="use-tls" checked>
+                    <label class="form-check-label" for="use-tls">
+                        Use TLS (recommended)
+                    </label>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="email-delay" class="form-label">Delay Between Emails (seconds)</label>
+                    <input type="number" class="form-control" id="email-delay" placeholder="0" min="0" value="0">
+                    <div class="form-text">Optional: Add delay between emails to reduce server load and avoid triggers for spam detection. This value will be used only for this campaign.</div>
+                </div>
+                
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <button type="button" class="btn btn-outline-primary" onclick="window.location.href='/settings'">Configure SMTP Settings</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-4">
+            <button type="button" class="btn btn-outline-secondary me-md-2" id="save-draft">Save as Draft</button>
+            <button type="submit" class="btn btn-primary">Send Campaign</button>
+        </div>
+    </form>
+
+    <!-- Sending Progress Modal -->
+    <div class="modal fade" id="sendingModal" tabindex="-1" aria-labelledby="sendingModalLabel" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="sendingModalLabel">Sending Campaign</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-3">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                    <p class="text-center">Your campaign is being sent. This may take a few moments.</p>
+                    <div class="progress">
+                        <div id="send-progress" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+                    </div>
+                    <p class="text-center mt-2" id="send-status">Preparing to send...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/tracking.js') }}"></script>
+<script src="{{ url_for('static', filename='js/campaigns.js') }}"></script>
+{% endblock %}

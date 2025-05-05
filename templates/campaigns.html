@@ -1,0 +1,166 @@
+{% extends "layout.html" %}
+
+{% block title %}Campaigns{% endblock %}
+
+{% block header %}Campaigns{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Action bar -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <a href="{{ url_for('new_campaign') }}" class="btn btn-primary">
+                <i class="fas fa-plus-circle"></i> New Campaign
+            </a>
+        </div>
+        <div class="d-flex">
+            <div class="input-group">
+                <input type="text" class="form-control" id="campaign-search" placeholder="Search campaigns...">
+                <button class="btn btn-outline-secondary" type="button" id="search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Campaigns list -->
+    <div class="card">
+        <div class="card-header">
+            <h5>All Campaigns</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Subject</th>
+                            <th>Sent</th>
+                            <th>Opens</th>
+                            <th>Clicks</th>
+                            <th>Created</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="campaigns-list">
+                        <!-- Campaigns will be loaded here via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Empty state -->
+    <div id="empty-state" class="text-center py-5 mt-4" style="display: none;">
+        <div class="mb-4">
+            <i class="fas fa-envelope fa-4x text-muted"></i>
+        </div>
+        <h3>No campaigns found</h3>
+        <p class="text-muted">Start by creating your first email campaign</p>
+        <a href="{{ url_for('new_campaign') }}" class="btn btn-primary">Create Campaign</a>
+    </div>
+
+    <!-- Campaign detail modal -->
+    <div class="modal fade" id="campaignDetailModal" tabindex="-1" aria-labelledby="campaignDetailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="campaignDetailModalLabel">Campaign Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs" id="campaignDetailTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab" aria-controls="overview" aria-selected="true">Overview</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="recipients-tab" data-bs-toggle="tab" data-bs-target="#recipients" type="button" role="tab" aria-controls="recipients" aria-selected="false">Recipients</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="content-tab" data-bs-toggle="tab" data-bs-target="#content" type="button" role="tab" aria-controls="content" aria-selected="false">Content</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content pt-3" id="campaignDetailTabContent">
+                        <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="fw-bold">Campaign Name:</label>
+                                        <p id="detail-name"></p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="fw-bold">Subject:</label>
+                                        <p id="detail-subject"></p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="fw-bold">From Name:</label>
+                                        <p id="detail-from-name"></p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="fw-bold">Reply To:</label>
+                                        <p id="detail-reply-to"></p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="fw-bold">Status:</label>
+                                        <p id="detail-status"></p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="fw-bold">Created:</label>
+                                        <p id="detail-created"></p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="fw-bold">Content Type:</label>
+                                        <p id="detail-content-type"></p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="fw-bold">Statistics:</label>
+                                        <div class="progress mb-2">
+                                            <div id="detail-open-rate" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                        </div>
+                                        <small id="detail-stats"></small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="recipients" role="tabpanel" aria-labelledby="recipients-tab">
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Email</th>
+                                            <th>Status</th>
+                                            <th>Opened</th>
+                                            <th>Clicked</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="detail-recipients">
+                                        <!-- Recipients will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="content" role="tabpanel" aria-labelledby="content-tab">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div id="detail-content"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="resend-campaign">Resend Campaign</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/campaigns.js') }}"></script>
+{% endblock %}

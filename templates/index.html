@@ -1,0 +1,100 @@
+{% extends "layout.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block header %}Welcome to Cold Mailer{% endblock %}
+
+{% block content %}
+<div class="hero-section mb-5">
+    <div class="hero-content">
+        <h1 class="hero-title">Powerful Cold Email System</h1>
+        <p class="hero-subtitle">Send targeted cold emails with real-time tracking, HTML/plain text options, and custom reply handling.</p>
+        <div class="hero-actions mt-4">
+            <a href="{{ url_for('new_campaign') }}" class="btn btn-primary btn-lg">
+                <i class="fas fa-plus-circle me-2"></i> Start New Campaign
+            </a>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-outline-light btn-lg ms-3">
+                <i class="fas fa-chart-line me-2"></i> View Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="features-section">
+    <div class="section-header text-center mb-5">
+        <h2 class="section-title">Key Features</h2>
+        <p class="section-subtitle">Everything you need for successful email campaigns</p>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-md-6 col-lg-3">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3 class="feature-title">Real-time Tracking</h3>
+                <p class="feature-text">Monitor open rates, delivery status, and click-through rates with our comprehensive tracking system.</p>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-3">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <h3 class="feature-title">HTML & Plain Text</h3>
+                <p class="feature-text">Choose between plain text emails for a personal touch or custom HTML templates for a polished look.</p>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-3">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-reply"></i>
+                </div>
+                <h3 class="feature-title">Custom Reply Handling</h3>
+                <p class="feature-text">Set custom reply-to addresses to ensure responses go exactly where you want them.</p>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-3">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <h3 class="feature-title">Responsive Design</h3>
+                <p class="feature-text">Access your campaigns and reports from any device with our fully responsive interface.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="cta-section mt-5">
+    <div class="cta-card">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h2 class="cta-title">Ready to get started?</h2>
+                <p class="cta-text">Create your first email campaign in minutes and start tracking results</p>
+            </div>
+            <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                <a href="{{ url_for('new_campaign') }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-rocket me-2"></i> Create Campaign
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add animation classes to elements
+        setTimeout(() => {
+            document.querySelector('.hero-title').classList.add('animate-in');
+            document.querySelector('.hero-subtitle').classList.add('animate-in');
+            document.querySelector('.hero-actions').classList.add('animate-in');
+        }, 300);
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,185 @@
+{% extends "layout.html" %}
+
+{% block title %}Settings{% endblock %}
+
+{% block header %}Settings{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5><i class="fas fa-server me-2"></i>SMTP Settings</h5>
+                </div>
+                <div class="card-body">
+                    <form id="smtp-settings-form">
+                        <div class="alert alert-info mb-3">
+                            <i class="fas fa-info-circle me-2"></i><strong>SMTP Configuration</strong>
+                            Enter your email server settings to send campaigns.
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="default-smtp-host" class="form-label">SMTP Host</label>
+                            <input type="text" class="form-control" id="default-smtp-host" placeholder="e.g., smtp.gmail.com">
+                        </div>
+                        <div class="mb-3">
+                            <label for="default-smtp-port" class="form-label">SMTP Port</label>
+                            <input type="number" class="form-control" id="default-smtp-port" placeholder="e.g., 587">
+                        </div>
+                        <div class="mb-3">
+                            <label for="default-smtp-username" class="form-label">SMTP Username</label>
+                            <input type="email" class="form-control" id="default-smtp-username" placeholder="Your email address">
+                        </div>
+                        <div class="mb-3">
+                            <label for="default-smtp-password" class="form-label">SMTP Password</label>
+                            <input type="password" class="form-control" id="default-smtp-password" placeholder="Your email password">
+                            <div class="form-text">For Gmail, use an <a href="https://support.google.com/accounts/answer/185833" target="_blank">App Password</a> instead of your regular password.</div>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="default-use-tls" checked>
+                            <label class="form-check-label" for="default-use-tls">
+                                Use TLS (recommended)
+                            </label>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="default-delay-seconds" class="form-label">Delay Between Emails (seconds)</label>
+                            <input type="number" class="form-control" id="default-delay-seconds" placeholder="0" min="0" value="0">
+                            <div class="form-text">Optional: Add delay between emails to reduce server load and avoid triggers for spam detection.</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="default-test-email" class="form-label">Test Email Address</label>
+                            <input type="email" class="form-control" id="default-test-email" placeholder="Enter email address for testing">
+                            <div class="form-text">This email will be used only for SMTP connection testing.</div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-between">
+                            <button type="button" id="test-smtp-button" class="btn btn-outline-primary">Test Connection</button>
+                            <button type="submit" class="btn btn-primary">Save SMTP Settings</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Default Reply-To Settings</h5>
+                </div>
+                <div class="card-body">
+                    <form id="reply-to-settings-form">
+                        <div class="mb-3">
+                            <label for="default-reply-to" class="form-label">Default Reply-To Email</label>
+                            <input type="email" class="form-control" id="default-reply-to" placeholder="Where replies should go by default">
+                            <div class="form-text">This email will be used as the default reply-to address for all campaigns.</div>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Save Reply-To Settings</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Default Sender Information</h5>
+                </div>
+                <div class="card-body">
+                    <form id="sender-settings-form">
+                        <div class="mb-3">
+                            <label for="default-from-name" class="form-label">Default From Name</label>
+                            <input type="text" class="form-control" id="default-from-name" placeholder="Name visible to recipients">
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Save Sender Settings</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Storage Management</h5>
+                </div>
+                <div class="card-body">
+                    <p>Cold Mailer stores all your data in your browser's local storage. Here you can manage your local data.</p>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6>Local Storage Usage</h6>
+                                <div class="progress mb-2" style="height: 8px;">
+                                    <div id="storage-usage" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                </div>
+                                <small id="storage-usage-text">Calculating...</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6>Data Management</h6>
+                        <div class="d-grid gap-2 d-md-flex">
+                            <button type="button" class="btn btn-outline-primary me-md-2" id="export-data">Export All Data</button>
+                            <button type="button" class="btn btn-outline-success me-md-2" id="import-data">Import Data</button>
+                            <button type="button" class="btn btn-outline-danger" id="clear-data" data-bs-toggle="modal" data-bs-target="#clearDataModal">Clear All Data</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Data Modal -->
+    <div class="modal fade" id="importDataModal" tabindex="-1" aria-labelledby="importDataModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="importDataModalLabel">Import Data</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="import-file" class="form-label">Select JSON File</label>
+                        <input class="form-control" type="file" id="import-file" accept=".json">
+                    </div>
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i> Warning: Importing data will overwrite your current data. Make sure to export your current data first if needed.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="confirm-import">Import</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Clear Data Modal -->
+    <div class="modal fade" id="clearDataModal" tabindex="-1" aria-labelledby="clearDataModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="clearDataModalLabel">Clear All Data</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle"></i> Warning: This will permanently delete all your campaigns, settings, and tracking data. This action cannot be undone.
+                    </div>
+                    <p>Please type <strong>DELETE</strong> to confirm:</p>
+                    <input type="text" class="form-control" id="delete-confirmation" placeholder="Type DELETE to confirm">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirm-clear" disabled>Clear All Data</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/settings.js') }}"></script>
+{% endblock %}
